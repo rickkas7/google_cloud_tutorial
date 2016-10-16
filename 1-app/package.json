@@ -1,0 +1,19 @@
+{
+  "name": "particle-datastore",
+  "description": "Sample for Particle Events to Google Cloud Datastore on Google App Engine",
+  "version": "0.0.1",
+  "private": true,
+  "license": "Apache Version 2.0",
+  "author": "Google Inc.",
+  "engines": {
+    "node": "^4.2.2"
+  },
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "@google-cloud/datastore": "^0.1.1",
+    "@google-cloud/pubsub": "^0.1.1",
+    "express": "^4.13.4"
+  }
+}
