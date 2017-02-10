@@ -532,6 +532,8 @@ It downloads the 100 most recent entries and prints them out as comma-separated 
 
 There's also an example in 5-excel that works like 4-download, except it saves the data in a file called out.xsls, and Excel-compatible spreadsheet file.
 
+It uses [xlsx](https://www.npmjs.com/package/xlsx) to create the files.
+
 ## App Engine to Firebase Example
 
 The example above uses the cloud datastore. This example uses Firebase. It's just another database option from Google. I'm not certain there's a significant benefit to using it over Cloud Datastore, but here's how to use it if you'd like to.
