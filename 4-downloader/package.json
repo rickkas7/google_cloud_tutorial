@@ -1,0 +1,17 @@
+{
+  "name": "datastore-download",
+  "description": "Sample for downloading Google Cloud Datastore data",
+  "version": "0.0.1",
+  "private": true,
+  "license": "Apache Version 2.0",
+  "author": "Google Inc.",
+  "engines": {
+    "node": "^6.9.5"
+  },
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "@google-cloud/datastore": "^0.1.1"
+  }
+}

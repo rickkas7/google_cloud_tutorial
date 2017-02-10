@@ -351,6 +351,40 @@ And, if you go to the Google console Datastore page, you can see the log entries
 
 ![Datastore](images/33datastore.png)
 
+### How it works
+
+
+The storeEvent function in app.js does the important work of getting things out of the pub/sub event and making it into the format you want to store in the database:
+
+```
+function storeEvent(message) {
+    var key = datastore.key('ParticleEvent');
+
+    // You can uncomment some of the other things if you want to store them in the database
+    var obj = {
+		// gc_pub_sub_id: message.id,
+		// device_id: message.attributes.device_id,
+		// event: message.attributes.event,
+		published_at: message.attributes.published_at
+	}
+
+    // Copy the data in message.data, the Particle event data, as top-level 
+    // elements in obj. This breaks the data out into separate columns.
+    for (var prop in message.data) {
+        if (message.data.hasOwnProperty(prop)) {
+            obj[prop] = message.data[prop];
+        }
+    }
+```
+
+This adds the published_at, and then copies out the data from the Particle event sent by the Photon. That data originally looked like this:
+
+```
+{"a":29,"b":0.875,"c":1883488164,"n":"test4"}
+```
+
+If you add additional data to the event data JSON object from the Particle side, it automatically adds new columns in the database automatically. Neat!
+
 ### Deploying to the cloud
 
 That wasn't too bad, but the goal is to deploy to the cloud. Fortunately, this is almost easier than running locally.
@@ -406,14 +440,212 @@ gcloud app logs read
 
 One thing to beware of: Deploying a new instance doesn't stop the old one first! Make sure you to clean up the old instances and versions from the console App Engine page.
 
+## Downloading Cloud Data
+
+This is an example of how to download your Google cloud datastore data. 
+
+### Getting the source
+
+The app source is in the same place as this tutorial, in the 4-download directory.
+
+[https://github.com/rickkas7/google\_cloud\_tutorial] (https://github.com/rickkas7/google_cloud_tutorial)
+
+You will probably want to clone or download the repository to your computer and then use the 4-download directory for this tutorial.
+
+
+### Running the example
+
+This example isn't really intended to run in the cloud; it's intended to run locally on your computer. However it uses the same Google authentication as you would for an app that can run either locally or in the cloud. 
+
+Also, this example assumes you've set up the Google Cloud Datastore example above and will reuse your service account key.
+
+If you want to run this example you must have Google Cloud SDK and node.js prerequisites installed as mentioned above. 
+
+```
+cd 4-download
+npm install
+```
+
+This will install all of the dependencies in the node_modules subdirectory.
+
+The following commands will run the server locally:
+
+```
+export GOOGLE_APPLICATION_CREDENTIALS=../credentials/test2-4f42ca1a6f8b.json
+export GCLOUD_PROJECT=test2-146010
+npm start
+```
+
+The `GOOGLE_APPLICATION_CREDENTIALS` line specifies the app credentials file I downloaded above. The name and path will vary depending on where you downloaded and moved it to and its name.
+
+The `GCLOUD_PROJECT` is your project ID.
+
+When you run it, you should see something like:
+
+```
+$ npm start
+
+> particle-datastore@0.0.1 start /Users/rickkas7/Documents/src/googlecloud/4download
+> node app.js
+
+7,0.993,445349752,2017-02-10T17:47:19.269Z
+6,0.995,553475508,2017-02-10T17:46:19.273Z
+5,0.996,812669700,2017-02-10T17:45:19.273Z
+4,0.998,1191391529,2017-02-10T17:44:19.272Z
+3,0.999,1270216262,2017-02-10T17:43:19.276Z
+2,0.999,1085377743,2017-02-10T17:42:19.273Z
+1,1,1481765933,2017-02-10T17:41:19.276Z
+```
+
+The code is simple, and looks like this:
+
+```
+var Datastore = require('@google-cloud/datastore');
+
+// Instantiate a datastore client
+var datastore = Datastore();
+
+const query = datastore.createQuery('ParticleEvent')
+	.limit(100)
+	.order('published_at', {
+	  descending: true
+	});
+
+datastore.runQuery(query, function(err, entities, info) {
+	if (err) {
+		console.log("database query error", err);
+		return;
+    }
+	
+	for(var ii = 0; ii < entities.length; ii++) {
+		var data = entities[ii].data;
+		
+		var csv = data.a + ',' + data.b + ',' + data.c  + ',' + data.published_at;
+		console.log(csv);
+	}
+});
+```
+
+It downloads the 100 most recent entries and prints them out as comma-separated values. 
+
+### Excel Example
+
+There's also an example in 5-excel that works like 4-download, except it saves the data in a file called out.xsls, and Excel-compatible spreadsheet file.
+
+## App Engine to Firebase Example
+
+The example above uses the cloud datastore. This example uses Firebase. It's just another database option from Google. I'm not certain there's a significant benefit to using it over Cloud Datastore, but here's how to use it if you'd like to.
+
+If you've already done the cloud datastore example above can reuse the subscription if you've stopped that server. Otherwise, create a new subscription:
+
+Select [Pub/Sub] (https://console.cloud.google.com/cloudpubsub/topicList) from the main menu (the lines icon in the upper left corner of the window) in the Google Cloud console.
+
+Then check the checkbox for your project and event (1) and hover to the right and select **New subscription**.
+
+![New subscription](images/30newsub.png)
+
+Then fill in the subscription name. The first part is fixed, I just added the `test2db` part. Select **Pull** as the delivery type.
+
+![New subscription](images/31newsub.png)
+
+### Adding your project to Firebase
+
+Go to the [Firebase console](https://console.firebase.google.com). Since we want to use our existing Google Cloud project test2, we'll use the **Import Google Project** option to add that.
+
+
+
+### Getting the source
+
+The app source is in the same place as this tutorial, in the 3-firebase directory.
+
+[https://github.com/rickkas7/google\_cloud\_tutorial] (https://github.com/rickkas7/google_cloud_tutorial)
+
+You will probably want to clone or download the repository to your computer and then use the 3-firebase directory for this tutorial.
+
+
+### Running the example locally
+
+The end goal is to run this code remotely on the Google cloud, but it takes a while to deploy a new VM running your code, so it's helpful and a huge time saver to be able to run it locally while you're developing your own code. Fortunately, the system is designed to make this (relatively) easy. 
+
+If you're only going to run the example in the cloud, you can skip to the next section, if you prefer.
+
+If you previously did the Google Cloud Datastore example above, you can reuse that service account key; you don't need to create a new one.
+
+Go to [Google API Manager] (https://console.developers.google.com/project/_/apis/credentials) and select your project (test2, in my case).
+
+Select **Create credentials** and then **Service account key**.
+
+In the Credentials window, select **App Engine default service account** and a **JSON** key type and click Create. A new file will be downloaded to your computer. 
+
+![Create credentials](images/32createcredentials.png)
+
+My file was test2-4f42ca1a6f8b.json. Keep this file secure. Don't share it online or even check it into github. It's intended to be specific to your computer. I copied mine to a credentials directory that is at the same level as my app source directory. Doing it this way makes sure I won't accidentally commit the file to git.
+
+If you want to test your code locally you must have Google Cloud SDK and node.js prerequisites installed as mentioned above. 
+
+```
+cd 3-firebase
+npm install
+```
+
+This will install all of the dependencies in the node_modules subdirectory.
+
+The following commands will run the server locally:
+
+```
+export GOOGLE_APPLICATION_CREDENTIALS=../credentials/test2-4f42ca1a6f8b.json
+export GCLOUD_PROJECT=test2-146010
+export PUBSUB_VERIFICATION_TOKEN=PLIRKOQ413FAAS4H2MX5WQ6O
+export PUBSUB_TOPIC=test2
+export PUBSUB_SUBSCRIPTION_NAME=test2db
+npm start
+```
+
+The `GOOGLE_APPLICATION_CREDENTIALS` line specifies the app credentials file I downloaded above. The name and path will vary depending on where you downloaded and moved it to and its name.
+
+The rest of the parameters match the values in app.yaml, which you should also edit because that's what used when you deploy to the cloud. The fields are explained in greater detail in the next section if you're unsure of what to set them to.
+
+The `PUBSUB_VERIFICATION_TOKEN` is just a random string. You can set it to any random string.
+
+When you run it, you should see something like:
+
+```
+$ npm start
+
+> particle-firebase@0.0.1 start /Users/rickkas7/Documents/src/googlecloud/3firebase
+> node app.js
+
+App listening on port 8080
+Press Ctrl+C to quit.
+```
+
+And, with any luck, if you turn on your photon with the code above, something like this:
+
+```
+event received { ackId: 'QV5AEkwkC0RJUytDCypYEU4EISE-MD5FU0RQBhYsXUZIUTcZCGhRDk9eIz81IChFEAUIFAV8fXFdUnVYVRoHUQ0ZcnxkJGhTE1cERQB7VVsRDXptXFc4UA0fe31ifWheGwMATVV7d9mKyYJvZho9XxJLLD5-Lz5F',
+  id: '106903824822865',
+  data: { a: 30, b: 0.866, c: 964776169, n: 'test4' },
+  attributes: 
+   { device_id: '1e0032123447343149111039',
+     event: 'test2data',
+     published_at: '2017-02-10T17:25:57.698Z' },
+  ack: [Function: bound ],
+  skip: [Function] }
+```
+
+And, if you go to the [Google Firebase console](https://console.firebase.google.com) you should be able to see the newly created data.
+
+![Firebase data](images/36firebase.png)
+
+### How it works
 
 
 The storeEvent function in app.js does the important work of getting things out of the pub/sub event and making it into the format you want to store in the database:
 
 ```
 function storeEvent(message) {
-    var key = datastore.key('ParticleEvent');
-
+	var particleEventRef = dbRef.child("ParticleEvent");
+	
     // You can uncomment some of the other things if you want to store them in the database
     var obj = {
 		// gc_pub_sub_id: message.id,
@@ -429,6 +661,9 @@ function storeEvent(message) {
             obj[prop] = message.data[prop];
         }
     }
+      
+    particleEventRef.push().set(obj);   
+}
 ```
 
 This adds the published_at, and then copies out the data from the Particle event sent by the Photon. That data originally looked like this:
@@ -438,6 +673,11 @@ This adds the published_at, and then copies out the data from the Particle event
 ```
 
 If you add additional data to the event data JSON object from the Particle side, it automatically adds new columns in the database automatically. Neat!
+
+### Deploying to the cloud
+
+The process is the same as for the Cloud Datastore example, so you can just follow the instructions there.
+
 
 ## Firmware for Electron
 
