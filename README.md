@@ -3,17 +3,17 @@
 This tutorial is for using the Google Cloud platform with a Particle device, such as a Photon or Electron, to store data into a cloud database.
 
 Updates to this document are here:
-[https://github.com/rickkas7/google\_cloud\_tutorial] (https://github.com/rickkas7/google_cloud_tutorial)
+[https://github.com/rickkas7/google\_cloud\_tutorial](https://github.com/rickkas7/google_cloud_tutorial)
 
 ## Initial Google setup
 
-The beginning steps are nearly identical to the steps in the [Particle Google Cloud Platform Tutorial] (https://docs.particle.io/tutorials/topics/google-cloud-platform/), and you should also read that for additional tips.
+The beginning steps are nearly identical to the steps in the [Particle Google Cloud Platform Tutorial](https://docs.particle.io/tutorials/topics/google-cloud-platform/), and you should also read that for additional tips.
 
-This is also designed to be very similar to my [Google Firebase Tutorial] (https://github.com/rickkas7/firebase_tutorial), except it uses Google Pub/Sub instead of Webhooks to access the database. Firebase is easier to get up and running quickly; this method is more powerful and scalable.
+This is also designed to be very similar to my [Google Firebase Tutorial](https://github.com/rickkas7/firebase_tutorial), except it uses Google Pub/Sub instead of Webhooks to access the database. Firebase is easier to get up and running quickly; this method is more powerful and scalable.
 
-There is a lot of [documentation for the Google Cloud] (https://cloud.google.com), as there are many, many parts to it. I'll only be using Pub/Sub, Datastore and App Engine for this tutorial.
+There is a lot of [documentation for the Google Cloud](https://cloud.google.com), as there are many, many parts to it. I'll only be using Pub/Sub, Datastore and App Engine for this tutorial.
 
-Sign up for the [Google Cloud Platform Free Trial] (https://cloud.google.com/free-trial/). When done, you should see your Google Cloud Platform dashboard:
+Sign up for the [Google Cloud Platform Free Trial](https://cloud.google.com/free-trial/). When done, you should see your Google Cloud Platform dashboard:
 
 ![Create project menu](images/01createproject.png)
 
@@ -63,7 +63,7 @@ And finally click **Add**.
 
 ## Particle console setup
 
-You'll need log into to the [Particle console] (https://console.particle.io).
+You'll need log into to the [Particle console](https://console.particle.io).
 
 ![New integration menu](images/10newintegration.png)
 
@@ -95,7 +95,7 @@ A green Success box should appear in the lower left corner of the window if the 
 
 ![Success panel](images/14success.png)
 
-You can also test this using the [Particle CLI] (https://particle.io/cli/).
+You can also test this using the [Particle CLI](https://particle.io/cli/).
 
 ```
 particle publish test2 "testing" --private
@@ -137,7 +137,7 @@ Hopefully, it did!
 
 ![Console subscription](images/21subconsole.png)
 
-Later on, we'll add the [Google Cloud SDK] (https://cloud.google.com/sdk/docs/) command lines that allow the same functions from your regular command line instead of a command line web browser window, but for now the web shell is pretty handy. Leave it open because we'll use it once more below.
+Later on, we'll add the [Google Cloud SDK](https://cloud.google.com/sdk/docs/) command lines that allow the same functions from your regular command line instead of a command line web browser window, but for now the web shell is pretty handy. Leave it open because we'll use it once more below.
 
 
 ## Photon firmware
@@ -233,30 +233,30 @@ Also, you should see the events in the Particle console, in Logs tab. The events
 
 ## Doing something with the data
 
-Now comes the tricky part. The [official Particle tutorial] (https://docs.particle.io/tutorials/topics/google-cloud-platform/) uses a node.js script that you run on your own computer, which is quick and easy.
+Now comes the tricky part. The [official Particle tutorial](https://docs.particle.io/tutorials/topics/google-cloud-platform/) uses a node.js script that you run on your own computer, which is quick and easy.
 
-It looks like [Cloud Dataflow] (https://cloud.google.com/dataflow/) might be appropriate for processing large amounts of data. It's pretty complicated, so I think I'll wait on that for a future tutorial.
+It looks like [Cloud Dataflow](https://cloud.google.com/dataflow/) might be appropriate for processing large amounts of data. It's pretty complicated, so I think I'll wait on that for a future tutorial.
 
-[Cloud Functions] (https://cloud.google.com/functions/) would be nice for this, I think. They're basically bits of code that get executed when something, like a pub/sub event, occur. Unfortunately cloud functions are in alpha and you need to sign up and get approved, and I haven't been approved yet.
+[Cloud Functions](https://cloud.google.com/functions/) would be nice for this, I think. They're basically bits of code that get executed when something, like a pub/sub event, occur. Unfortunately cloud functions are in alpha and you need to sign up and get approved, and I haven't been approved yet.
 
-That leaves [App Engine] (https://cloud.google.com/appengine/). At first this seemed like overkill, but it's actually not that difficult to use. And, since you get 28 instance hours of app engine per day in the free tier, if you don't use it too much it's still free. And, once you beyond simple samples, there is so much customization you can do, not only for storing the data, but also retrieving and displaying it. That seems ideal for a more complex example, say one that also had web pages for visualizing the data, etc..
+That leaves [App Engine](https://cloud.google.com/appengine/). At first this seemed like overkill, but it's actually not that difficult to use. And, since you get 28 instance hours of app engine per day in the free tier, if you don't use it too much it's still free. And, once you beyond simple samples, there is so much customization you can do, not only for storing the data, but also retrieving and displaying it. That seems ideal for a more complex example, say one that also had web pages for visualizing the data, etc..
 
 ## Setting up App Engine
 
-There are a bunch of options when using app engine, but since the [official Particle example] (https://github.com/spark/google-cloud-datastore-tutorial) was already written in node.js and I'm familiar with that, I decided to use a [flexible environment node.js] (https://cloud.google.com/appengine/docs/flexible/nodejs/) configuration for my app engine.
+There are a bunch of options when using app engine, but since the [official Particle example](https://github.com/spark/google-cloud-datastore-tutorial) was already written in node.js and I'm familiar with that, I decided to use a [flexible environment node.js](https://cloud.google.com/appengine/docs/flexible/nodejs/) configuration for my app engine.
 
-Running through the [quickstart] (https://cloud.google.com/appengine/docs/flexible/nodejs/quickstart) will get the prerequisites installed and functioning. If you want to get a feel for how this works, go through the hello world, pub/sub and cloud datastore how-tos, which is how I figured out how to do this. Though note that the pub/sub app engine example uses push mode and I ended up using pull mode, so there are some differences there.
+Running through the [quickstart](https://cloud.google.com/appengine/docs/flexible/nodejs/quickstart) will get the prerequisites installed and functioning. If you want to get a feel for how this works, go through the hello world, pub/sub and cloud datastore how-tos, which is how I figured out how to do this. Though note that the pub/sub app engine example uses push mode and I ended up using pull mode, so there are some differences there.
 
 ### Install Google Cloud SDK
 
-The only step you really need to do if you just want to deploy the sample is to install the [Google Cloud SDK] (https://cloud.google.com/sdk/docs/). This provides local command line tools on your computer so you can deploy the code. There are easy installers for Windows, Mac and Linux.
+The only step you really need to do if you just want to deploy the sample is to install the [Google Cloud SDK](https://cloud.google.com/sdk/docs/). This provides local command line tools on your computer so you can deploy the code. There are easy installers for Windows, Mac and Linux.
 
 
 ## App engine pub/sub storage example
 
 We need a new pull subscription in order to implement this. 
 
-Select [Pub/Sub] (https://console.cloud.google.com/cloudpubsub/topicList) from the main menu (the lines icon in the upper left corner of the window) in the Google Cloud console.
+Select [Pub/Sub](https://console.cloud.google.com/cloudpubsub/topicList) from the main menu (the lines icon in the upper left corner of the window) in the Google Cloud console.
 
 Then check the checkbox for your project and event (1) and hover to the right and select **New subscription**.
 
@@ -271,7 +271,7 @@ Then fill in the subscription name. The first part is fixed, I just added the `t
 
 The app source is in the same place as this tutorial, in the 1-app directory.
 
-[https://github.com/rickkas7/google\_cloud\_tutorial] (https://github.com/rickkas7/google_cloud_tutorial)
+[https://github.com/rickkas7/google\_cloud\_tutorial](https://github.com/rickkas7/google_cloud_tutorial)
 
 You will probably want to clone or download the repository to your computer and then use the 1-app directory for this tutorial.
 
@@ -282,7 +282,7 @@ The end goal is to run this code remotely on the Google cloud, but it takes a wh
 
 If you're only going to run the example in the cloud, you can skip to the next section, if you prefer.
 
-Go to [Google API Manager] (https://console.developers.google.com/project/_/apis/credentials) and select your project (test2, in my case).
+Go to [Google API Manager](https://console.developers.google.com/project/_/apis/credentials) and select your project (test2, in my case).
 
 Select **Create credentials** and then **Service account key**.
 
@@ -448,7 +448,7 @@ This is an example of how to download your Google cloud datastore data.
 
 The app source is in the same place as this tutorial, in the 4-download directory.
 
-[https://github.com/rickkas7/google\_cloud\_tutorial] (https://github.com/rickkas7/google_cloud_tutorial)
+[https://github.com/rickkas7/google\_cloud\_tutorial](https://github.com/rickkas7/google_cloud_tutorial)
 
 You will probably want to clone or download the repository to your computer and then use the 4-download directory for this tutorial.
 
@@ -540,7 +540,7 @@ The example above uses the cloud datastore. This example uses Firebase. It's jus
 
 If you've already done the cloud datastore example above can reuse the subscription if you've stopped that server. Otherwise, create a new subscription:
 
-Select [Pub/Sub] (https://console.cloud.google.com/cloudpubsub/topicList) from the main menu (the lines icon in the upper left corner of the window) in the Google Cloud console.
+Select [Pub/Sub](https://console.cloud.google.com/cloudpubsub/topicList) from the main menu (the lines icon in the upper left corner of the window) in the Google Cloud console.
 
 Then check the checkbox for your project and event (1) and hover to the right and select **New subscription**.
 
@@ -560,7 +560,7 @@ Go to the [Firebase console](https://console.firebase.google.com). Since we want
 
 The app source is in the same place as this tutorial, in the 3-firebase directory.
 
-[https://github.com/rickkas7/google\_cloud\_tutorial] (https://github.com/rickkas7/google_cloud_tutorial)
+[https://github.com/rickkas7/google\_cloud\_tutorial](https://github.com/rickkas7/google_cloud_tutorial)
 
 You will probably want to clone or download the repository to your computer and then use the 3-firebase directory for this tutorial.
 
@@ -573,7 +573,7 @@ If you're only going to run the example in the cloud, you can skip to the next s
 
 If you previously did the Google Cloud Datastore example above, you can reuse that service account key; you don't need to create a new one.
 
-Go to [Google API Manager] (https://console.developers.google.com/project/_/apis/credentials) and select your project (test2, in my case).
+Go to [Google API Manager](https://console.developers.google.com/project/_/apis/credentials) and select your project (test2, in my case).
 
 Select **Create credentials** and then **Service account key**.
 
