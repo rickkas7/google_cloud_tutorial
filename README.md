@@ -130,7 +130,7 @@ particle publish test2 "testing" --private
 And then check to see if it arrived in the Google shell:
 
 ```
-gcloud beta pubsub subscriptions pull test2 --auto-ack --max-messages 100
+gcloud beta pubsub subscriptions pull test2 --auto-ack --limit 100
 ```
 
 Hopefully, it did!
