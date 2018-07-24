@@ -252,7 +252,7 @@ gcloud components update
 gcloud components install beta
 ```
 
-## Google Cloud Functions Example
+## Google Cloud Functions to Datastore Example
 
 A good place to learn about cloud functions is the [Google Cloud Functions Tutorial](https://cloud.google.com/functions/docs/tutorials/pubsub).
 
@@ -288,6 +288,10 @@ To check the logs:
 ```
 gcloud beta functions logs read --limit 50
 ```
+
+And, if you go to the Google console Datastore page, you can see the log entries that were created:
+
+![Cloud Datastore](images/47datastore.png)
 
 And of course you can use the device firmware from the previous example to populate the Google Cloudstore data.
 
@@ -368,15 +372,21 @@ Click the blue **Share** button in the upper right. Enter the service account em
 
 Also the URL. For example, mine was:
 
+```
 https://docs.google.com/spreadsheets/d/12jG-R4-OqefJfC4kxh4ZSIww8qK1rQkDQBGgzaz9zxY/edit#gid=0
+```
 
-The long part in the middle is the spreadsheet ID. Mine was **12jG-R4-OqefJfC4kxh4ZSIww8qK1rQkDQBGgzaz9zxY**. 
+The long part in the middle between the slashes is the spreadsheet ID. Mine was:
+
+```
+12jG-R4-OqefJfC4kxh4ZSIww8qK1rQkDQBGgzaz9zxY
+```
 
 Edit the config.json file you created above and add in the spreadsheetId along with the key:
 
 ```
 {
-  "key":"YOUR_API_KEY",
+  "key":"AIzbSyC8Q3X4QazhjJHxy6ZdE1XrJIBUuFwup2o",
   "spreadsheetId":"12jG-R4-OqefJfC4kxh4ZSIww8qK1rQkDQBGgzaz9zxY"
 }
 ```
