@@ -297,7 +297,160 @@ To delete this cloud function:
 gcloud beta functions delete datastoreTest 
 ```
 
+## Storing in Google Sheets using Cloud Functions
+
+A good place to learn about cloud functions is the [Google Cloud Functions Tutorial](https://cloud.google.com/functions/docs/tutorials/pubsub).
+
+### Getting the source
+
+The app source is in the same place as this tutorial, in the 7-sheets-function directory.
+
+[https://github.com/rickkas7/google\_cloud\_tutorial](https://github.com/rickkas7/google_cloud_tutorial)
+
+You will probably want to clone or download the repository to your computer and then use the 7-sheets-function directory for this tutorial.
+
+### Set up authentication
+
+
+#### Create a service account
+
+Log into the Google cloud console and select the menu (1), then **APIs & Services**, then **Credentials** (2), then click the **Create Credentials** button (3).
+
+![Create credentials](images/40createcredentials.png)
+
+Then select **Service account key**.
+
+![Service Account Key](images/41serviceaccountkey.png)
+
+Select **New Service Account** and enter a service account name. I entered **spreadsheet-writer** but you can select a different name.
+
+Click **Select a role** then **Project** then **Browser**.
+
+![Service Account Settings](images/42serviceaccountsettings.png)
+
+Download this key file in JSON and save it to credentials.json in the 7-sheets-function directory.
+
+Also note the service account ID. In my case, it was: 
+
+```
+spreadsheet-writer@test2-146010.iam.gserviceaccount.com
+```
+
+You'll need that later.
+
+#### Create an API key
+
+![Create API Key](images/43createapikey.png)
+
+Copy and paste the API Key into a file config.json in the 7-sheets-function directory:
+
+```
+{
+  "key":"YOUR_API_KEY"
+}
+```
+
+#### Enable sheets API
+
+In **APIs & Services** click on **Dashboard** (1). Then **Enable APIs and Services** (2).
+
+![Enable sheets API](images/44enablesheets.png)
+
+Search for and enable **Google Sheets API**.
+
+#### Create a spreadsheet
+
+Log into Google spreadsheets and create a new spreadsheet. 
+
+Click the blue **Share** button in the upper right. Enter the service account email you noted above. Mine was **spreadsheet-writer@test2-146010.iam.gserviceaccount.com**.
+
+![Share Spreadsheet](images/45share.png)
+
+Also the URL. For example, mine was:
+
+https://docs.google.com/spreadsheets/d/12jG-R4-OqefJfC4kxh4ZSIww8qK1rQkDQBGgzaz9zxY/edit#gid=0
+
+The long part in the middle is the spreadsheet ID. Mine was **12jG-R4-OqefJfC4kxh4ZSIww8qK1rQkDQBGgzaz9zxY**. 
+
+Edit the config.json file you created above and add in the spreadsheetId along with the key:
+
+```
+{
+  "key":"YOUR_API_KEY",
+  "spreadsheetId":"12jG-R4-OqefJfC4kxh4ZSIww8qK1rQkDQBGgzaz9zxY"
+}
+```
+
+#### Deploy
+
+Now you have:
+
+- Source code in 7-sheets-function
+- config.json in that directory with your key and spreadsheetId
+- credentials.json that you downloaded when you created your service key
+
+Now deploy it:
+
+```
+cd 7-sheets-function
+gcloud beta functions deploy sheetsTest --trigger-resource test2 --trigger-event google.pubsub.topic.publish
+```
+
+You can generate some test data from the Particle CLI or flash the test firmware to a device.
+
+```
+particle publish test2 '{"a":3,"b":0.999,"c":1270216262,"n":"test2"}'
+```
+
+Wait maybe 10 seconds and check the logs:
+
+```
+gcloud beta functions logs read --limit 10
+```
+
+And you can also check your spreadsheet. With any luck, you'll have a new row in it!
+
+![Spreadsheet](images/46spreadsheet.png)
+
+If you are committing your code to source control (like github), make sure you don't commit the credentials.json or config.json files, as they have secrets you should not share.
+
+### How it works
+
+There's a lot of boilerplate code in the index.js file in the source. But the important part is this:
+
+```
+	// This generates the columns for the row to add to the spreadsheet
+	row.push(pubsubMessage.attributes.published_at);
+	
+	const fields = ['a', 'b', 'c', 'n'];
+	fields.forEach(function(field) {
+		if (jsonData.hasOwnProperty(field)) {
+			row.push(jsonData[field]);
+		}
+		else {
+			row.push('');
+		}
+	});
+```
+
+What this does is form the spreadsheet row from the jsonData we got from the Photon.
+
+The first column is the timestamp from the published_at field.
+
+The next columns are the fields a, b, c, and n from the jsonData. You can customize this however you want, and even transform the data from the cloud function before saving it in the spreadsheet.
+
+The [Google Sheets with node.js](https://developers.google.com/sheets/api/guides/values) documentation can help you do more advanced things with spreadsheet generation.
+
+To delete this cloud function:
+
+```
+gcloud beta functions delete sheetsTest 
+```
+
+
 ## Setting up App Engine
+
+In many cases, things will be much easier if you use Google Cloud Functions from the previous examples. There was a period of time, however, when Google Cloud Functions did not exist and the only way to do this was App Engine. The App Engine examples are still included here, because if you want to also provide a web interface, App Engine is still a great way to do both Express and Google Pub/Sub from a single container.
 
 There are a bunch of options when using app engine, but since the [official Particle example](https://github.com/spark/google-cloud-datastore-tutorial) was already written in node.js and I'm familiar with that, I decided to use a [flexible environment node.js](https://cloud.google.com/appengine/docs/flexible/nodejs/) configuration for my app engine.
 

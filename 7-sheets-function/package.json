@@ -1,0 +1,18 @@
+{
+  "name": "particle-sheets-7",
+  "description": "Sample for Particle Events to Google sheets using cloud functions",
+  "version": "0.0.1",
+  "private": true,
+  "license": "Apache Version 2.0",
+  "author": "rickkas7",
+  "engines": {
+    "node": "^4.2.2"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@google-cloud/datastore": "^1.4.1",
+    "googleapis": "^26.0.1"
+  }
+}
