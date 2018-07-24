@@ -237,9 +237,65 @@ Now comes the tricky part. The [official Particle tutorial](https://docs.particl
 
 It looks like [Cloud Dataflow](https://cloud.google.com/dataflow/) might be appropriate for processing large amounts of data. It's pretty complicated, so I think I'll wait on that for a future tutorial.
 
-[Cloud Functions](https://cloud.google.com/functions/) would be nice for this, I think. They're basically bits of code that get executed when something, like a pub/sub event, occur. Unfortunately cloud functions are in alpha and you need to sign up and get approved, and I haven't been approved yet.
+[Cloud Functions](https://cloud.google.com/functions/) are bits of code that get executed when something, like a pub/sub event, occur. These are the easiest way to get started and are the next example.
+ 
+Another option is [App Engine](https://cloud.google.com/appengine/). At first this seemed like overkill, but it's actually not that difficult to use. And, since you get 28 instance hours of app engine per day in the free tier, if you don't use it too much it's still free. And, once you beyond simple samples, there is so much customization you can do, not only for storing the data, but also retrieving and displaying it. That seems ideal for a more complex example, say one that also had web pages for visualizing the data, etc.. A simple example follows after the cloud function example.
 
-That leaves [App Engine](https://cloud.google.com/appengine/). At first this seemed like overkill, but it's actually not that difficult to use. And, since you get 28 instance hours of app engine per day in the free tier, if you don't use it too much it's still free. And, once you beyond simple samples, there is so much customization you can do, not only for storing the data, but also retrieving and displaying it. That seems ideal for a more complex example, say one that also had web pages for visualizing the data, etc..
+### Install Google Cloud SDK
+
+The [Google Cloud SDK](https://cloud.google.com/sdk/docs/) is required for both the cloud functions and app engines methods. This provides local command line tools on your computer so you can deploy the code. There are easy installers for Windows, Mac and Linux.
+
+You'll probably want to install the beta components as well. These commands can also update an older install:
+
+```
+gcloud components update 
+gcloud components install beta
+```
+
+## Google Cloud Functions Example
+
+A good place to learn about cloud functions is the [Google Cloud Functions Tutorial](https://cloud.google.com/functions/docs/tutorials/pubsub).
+
+### Getting the source
+
+The app source is in the same place as this tutorial, in the 6-function directory.
+
+[https://github.com/rickkas7/google\_cloud\_tutorial](https://github.com/rickkas7/google_cloud_tutorial)
+
+You will probably want to clone or download the repository to your computer and then use the 6-function directory for this tutorial.
+
+```
+cd 6-function
+gcloud beta functions deploy datastoreTest --trigger-resource test2 --trigger-event google.pubsub.topic.publish
+```
+
+Replace the test2 in the --trigger-resource with your topic name, of course. If you have not already enabled cloud functions it will prompt you to enable them and retry.
+
+Assuming you've set up the Particle console Google cloud integration, you can test it by publishing an event:
+
+```
+particle publish test2 '{"a":123}'
+```
+
+To test just the gcloud part:
+
+```
+gcloud beta pubsub topics publish test2 --message '{"a":123}'
+```
+
+To check the logs:
+
+```
+gcloud beta functions logs read --limit 50
+```
+
+And of course you can use the device firmware from the previous example to populate the Google Cloudstore data.
+
+To delete this cloud function:
+
+```
+gcloud beta functions delete datastoreTest 
+```
 
 ## Setting up App Engine
 
@@ -247,14 +303,17 @@ There are a bunch of options when using app engine, but since the [official Part
 
 Running through the [quickstart](https://cloud.google.com/appengine/docs/flexible/nodejs/quickstart) will get the prerequisites installed and functioning. If you want to get a feel for how this works, go through the hello world, pub/sub and cloud datastore how-tos, which is how I figured out how to do this. Though note that the pub/sub app engine example uses push mode and I ended up using pull mode, so there are some differences there.
 
-### Install Google Cloud SDK
+### Getting the source
 
-The only step you really need to do if you just want to deploy the sample is to install the [Google Cloud SDK](https://cloud.google.com/sdk/docs/). This provides local command line tools on your computer so you can deploy the code. There are easy installers for Windows, Mac and Linux.
+The app source is in the same place as this tutorial, in the 1-app directory.
 
+[https://github.com/rickkas7/google\_cloud\_tutorial](https://github.com/rickkas7/google_cloud_tutorial)
 
-## App engine pub/sub storage example
+You will probably want to clone or download the repository to your computer and then use the 1-app directory for this tutorial.
 
-We need a new pull subscription in order to implement this. 
+### Set up subscription
+
+We need a new pull subscription in order to implement the app engine versions of the code. 
 
 Select [Pub/Sub](https://console.cloud.google.com/cloudpubsub/topicList) from the main menu (the lines icon in the upper left corner of the window) in the Google Cloud console.
 
@@ -265,16 +324,6 @@ Then check the checkbox for your project and event (1) and hover to the right an
 Then fill in the subscription name. The first part is fixed, I just added the `test2db` part. Select **Pull** as the delivery type.
 
 ![New subscription](images/31newsub.png)
-
-
-### Getting the source
-
-The app source is in the same place as this tutorial, in the 1-app directory.
-
-[https://github.com/rickkas7/google\_cloud\_tutorial](https://github.com/rickkas7/google_cloud_tutorial)
-
-You will probably want to clone or download the repository to your computer and then use the 1-app directory for this tutorial.
-
 
 ### Running the example locally
 
@@ -852,6 +901,5 @@ void deviceNameHandler(const char *topic, const char *data) {
 	}
 }
 ```
-
 
 
