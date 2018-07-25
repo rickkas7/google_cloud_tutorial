@@ -1,0 +1,18 @@
+{
+  "name": "particle-datastore-8",
+  "description": "Sample for Particle Events to read and write Google Cloud Datastore using cloud functions",
+  "version": "0.0.1",
+  "private": true,
+  "license": "Apache Version 2.0",
+  "author": "rickkas7",
+  "engines": {
+    "node": "^8.11.2"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@google-cloud/datastore": "^1.4.1",
+    "particle-api-js": "^7.2.2"
+  }
+}

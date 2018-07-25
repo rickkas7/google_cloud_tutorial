@@ -301,6 +301,90 @@ To delete this cloud function:
 gcloud beta functions delete datastoreTest 
 ```
 
+## Datastore and Particle API using Cloud Functions
+
+Like the previous examples, the device publishes some random JSON data every minute, like this:
+
+```
+ {"a":2,"b":0.999,"c":1085377743,"n":"test2"}
+```
+
+This is stored in the Google cloud data store, along with a timestamp.
+
+The difference is that after storing the data in the cloud data store, the cloud function uses Particle.publish to publish the latest data to all devices in the account. 
+
+While this example just shows publish, the same technique could be used to read from the cloud data store and publish data. Or read from the cloud data store and call a function with data.
+
+A good place to learn about cloud functions is the [Google Cloud Functions Tutorial](https://cloud.google.com/functions/docs/tutorials/pubsub).
+
+### Getting the node.js source
+
+The app source is in the same place as this tutorial, in the 8-particle-api-function directory.
+
+[https://github.com/rickkas7/google\_cloud\_tutorial](https://github.com/rickkas7/google_cloud_tutorial)
+
+You will probably want to clone or download the repository to your computer and then use the 8-particle-api-function directory for this tutorial.
+
+You'll need to create a file config.json in the 8-particle-api-function directory containing a Particle access token for your account. You can find one in the settings panel at [https://build.particle.io](https://build.particle.io) or you can generate one.
+
+config.json:
+
+```
+{
+	"AUTH_TOKEN":"8c4943f741b8d5bc621b26c723d961b1ac81998d"
+}
+```
+
+```
+cd 8-particle-api-function
+gcloud beta functions deploy datastoreApiTest --trigger-resource test2 --trigger-event google.pubsub.topic.publish
+```
+
+Replace the test2 in the --trigger-resource with your topic name, of course. If you have not already enabled cloud functions it will prompt you to enable them and retry.
+
+
+#### User firmware
+
+This example requires special firmware to print the recent data from other devices to the serial debugging console. You can flash it like:
+
+```
+cd 8-particle-api-function
+particle flash test4 8-photon.cpp
+```
+
+This flashes the test firmware to device "test4".
+
+#### Checking the results 
+
+To check the logs:
+
+```
+gcloud beta functions logs read --limit 10
+```
+
+If you go to the Google console Datastore page, you can see the log entries that were created. In this example you can see that both test2 and test4 published data.
+
+![Cloud Datastore](images/48datastore.png)
+
+
+The serial debug logs (`particle serial monitor`) should look something like this:
+
+```
+0000001382 [hal.wlan] INFO: Bringing WiFi interface up with static IP
+0000010000 [app] INFO: publishing {"a":1,"b":1.000,"c":1481765933,"n":"test2"}
+0000013123 [app] INFO: recent: {"published_at":"2018-07-25T14:24:46.144Z","a":1,"b":1,"c":1481765933,"n":"test2"}
+part0000070000 [app] INFO: publishing {"a":2,"b":0.999,"c":1085377743,"n":"test2"}
+0000071381 [app] INFO: recent: {"published_at":"2018-07-25T14:25:46.144Z","a":2,"b":0.999,"c":1085377743,"n":"test2"}
+0000087032 [app] INFO: recent: {"published_at":"2018-07-25T14:26:02.570Z","a":1,"b":1,"c":1481765933,"n":"test4"}
+```
+
+To delete this cloud function:
+
+```
+gcloud beta functions delete datastoreApiTest 
+```
+
+
 ## Storing in Google Sheets using Cloud Functions
 
 A good place to learn about cloud functions is the [Google Cloud Functions Tutorial](https://cloud.google.com/functions/docs/tutorials/pubsub).
