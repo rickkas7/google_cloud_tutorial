@@ -506,6 +506,12 @@ And you can also check your spreadsheet. With any luck, you'll have a new row in
 
 ![Spreadsheet](images/46spreadsheet.png)
 
+I was using the United States date format, but you can easily transform it by changing this line of code:
+
+```
+	row.push(dateFormat(d, 'm/d/yyyy HH:MM:ss'));
+```
+
 If you are committing your code to source control (like github), make sure you don't commit the credentials.json or config.json files, as they have secrets you should not share.
 
 ### How it works

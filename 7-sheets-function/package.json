@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@google-cloud/datastore": "^1.4.1",
+    "dateformat": "^3.0.3",
     "googleapis": "^26.0.1"
   }
 }

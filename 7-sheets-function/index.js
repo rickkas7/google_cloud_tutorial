@@ -3,6 +3,8 @@ const {google} = require('googleapis');
 
 const sheets = google.sheets({version: 'v4'});
 
+const dateFormat = require('dateformat');
+
 const credentials = require("./credentials.json");
 
 const config = require("./config.json");
@@ -34,8 +36,10 @@ exports.sheetsTest = (event, callback) => {
 	var row = [];
 
 	// This generates the columns for the row to add to the spreadsheet
-	row.push(pubsubMessage.attributes.published_at);
+	var d = Date.parse(pubsubMessage.attributes.published_at);
 	
+	row.push(dateFormat(d, 'm/d/yyyy HH:MM:ss'));
+			
 	const fields = ['a', 'b', 'c', 'n'];
 	fields.forEach(function(field) {
 		if (jsonData.hasOwnProperty(field)) {
