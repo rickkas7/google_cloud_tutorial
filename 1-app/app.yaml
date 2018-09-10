@@ -13,7 +13,7 @@
 
 # [START app_yaml]
 runtime: nodejs
-vm: true
+env: flex
 
 # This service needs very little CPU, so limit to one instance. If you're handling
 # a lot of events from a very large number of devices you may want to enable 
@@ -23,7 +23,6 @@ manual_scaling:
 
 # [START env_variables]
 env_variables:
-  GCLOUD_PROJECT: test2-146010
   PUBSUB_TOPIC: test2
   PUBSUB_SUBSCRIPTION_NAME: test2db
   # This token is used to verify that requests originate from your
