@@ -1,5 +1,7 @@
 # Google Cloud Tutorial
 
+**This tutorial is no longer maintained** and may require modifications to use. It also may have dependencies on packages that no longer exist or include packages with vulnerabilities.
+
 This tutorial is for using the Google Cloud platform with a Particle device, such as a Photon or Electron, to store data into a cloud database.
 
 Updates to this document are here:
